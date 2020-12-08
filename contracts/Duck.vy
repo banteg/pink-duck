@@ -22,7 +22,7 @@ decimals: public(uint256)
 balanceOf: public(HashMap[address, uint256])
 allowances: HashMap[address, HashMap[address, uint256]]
 totalSupply: public(uint256)
-col: public(ERC20)
+COL: constant(address) = 0xC76FB75950536d98FA62ea968E1D6B45ffea2A55
 DEAD: constant(address) = 0x000000000000000000000000000000000000dEaD
 RATIO: constant(uint256) = 100  # 1 DUCK equals 100 COL
 
@@ -32,7 +32,6 @@ def __init__():
     self.name = 'Unit Protocol'
     self.symbol = 'DUCK'
     self.decimals = 18
-    self.col = ERC20(0xC76FB75950536d98FA62ea968E1D6B45ffea2A55)
 
 
 @external
@@ -40,10 +39,10 @@ def migrate():
     """
     Migrate COL to DUCK. Quack quack.
     """
-    col_amount: uint256 = self.col.balanceOf(msg.sender)
+    col_amount: uint256 = ERC20(COL).balanceOf(msg.sender)
     duck_amount: uint256 = col_amount / RATIO
     assert duck_amount > 0  # dev: nothing to migrate
-    self.col.transferFrom(msg.sender, DEAD, col_amount)
+    ERC20(COL).transferFrom(msg.sender, DEAD, col_amount)
     self.totalSupply += duck_amount
     self.balanceOf[msg.sender] += duck_amount
     log Transfer(ZERO_ADDRESS, msg.sender, duck_amount)
