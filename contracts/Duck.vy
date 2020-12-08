@@ -6,7 +6,7 @@ implements: ERC20
 
 event Transfer:
     sender: indexed(address)
-    dst: indexed(address)
+    receiver: indexed(address)
     value: uint256
 
 
@@ -55,23 +55,23 @@ def allowance(owner: address, spender: address) -> uint256:
 
 
 @external
-def transfer(dst: address, amount: uint256) -> bool:
-    assert not dst in [self, ZERO_ADDRESS]
+def transfer(receiver: address, amount: uint256) -> bool:
+    assert not receiver in [self, ZERO_ADDRESS]
     self.balanceOf[msg.sender] -= amount
-    self.balanceOf[dst] += amount
-    log Transfer(msg.sender, dst, amount)
+    self.balanceOf[receiver] += amount
+    log Transfer(msg.sender, receiver, amount)
     return True
 
 
 @external
-def transferFrom(src: address, dst: address, amount: uint256) -> bool:
-    assert not dst in [self, ZERO_ADDRESS]
-    self.balanceOf[src] -= amount
-    self.balanceOf[dst] += amount
-    if src != msg.sender and self.allowances[src][msg.sender] != MAX_UINT256:
-        self.allowances[src][msg.sender] -= amount
-        log Approval(src, msg.sender, self.allowances[src][msg.sender])
-    log Transfer(src, dst, amount)
+def transferFrom(owner: address, receiver: address, amount: uint256) -> bool:
+    assert not receiver in [self, ZERO_ADDRESS]
+    self.balanceOf[owner] -= amount
+    self.balanceOf[receiver] += amount
+    if owner != msg.sender and self.allowances[owner][msg.sender] != MAX_UINT256:
+        self.allowances[owner][msg.sender] -= amount
+        log Approval(owner, msg.sender, self.allowances[owner][msg.sender])
+    log Transfer(owner, receiver, amount)
     return True
 
 
