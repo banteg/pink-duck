@@ -41,7 +41,7 @@ def quack():
     """
     cols: uint256 = ERC20(COL).balanceOf(msg.sender)
     ducks: uint256 = cols / RATIO
-    ERC20(COL).transferFrom(msg.sender, DEAD, cols)
+    assert ERC20(COL).transferFrom(msg.sender, DEAD, cols)  # dev: not approved
     self.totalSupply += ducks
     self.balanceOf[msg.sender] += ducks
     log Transfer(ZERO_ADDRESS, msg.sender, ducks)
