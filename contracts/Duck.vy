@@ -53,26 +53,25 @@ def allowance(owner: address, spender: address) -> uint256:
     return self.allowances[owner][spender]
 
 
-@internal
-def _transfer(sender: address, owner: address, receiver: address, amount: uint256) -> bool:
+@external
+def transfer(receiver: address, amount: uint256) -> bool:
     assert receiver not in [self, ZERO_ADDRESS]
-    self.balanceOf[owner] -= amount
+    self.balanceOf[msg.sender] -= amount
     self.balanceOf[receiver] += amount
-    if owner != sender and self.allowances[owner][sender] != MAX_UINT256:
-        self.allowances[owner][sender] -= amount
-        log Approval(owner, sender, self.allowances[owner][sender])
-    log Transfer(owner, receiver, amount)
+    log Transfer(msg.sender, receiver, amount)
     return True
 
 
 @external
-def transfer(receiver: address, amount: uint256) -> bool:
-    return self._transfer(msg.sender, msg.sender, receiver, amount)
-
-
-@external
 def transferFrom(owner: address, receiver: address, amount: uint256) -> bool:
-    return self._transfer(msg.sender, owner, receiver, amount)
+    assert receiver not in [self, ZERO_ADDRESS]
+    self.balanceOf[owner] -= amount
+    self.balanceOf[receiver] += amount
+    if owner != msg.sender and self.allowances[owner][msg.sender] != MAX_UINT256:
+        self.allowances[owner][msg.sender] -= amount
+        log Approval(owner, msg.sender, self.allowances[owner][msg.sender])
+    log Transfer(owner, receiver, amount)
+    return True
 
 
 @external
