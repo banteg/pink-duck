@@ -1,4 +1,4 @@
-# @version 0.2.7
+# @version 0.2.8
 from vyper.interfaces import ERC20
 
 implements: ERC20
@@ -35,17 +35,16 @@ def __init__():
 
 
 @external
-def migrate():
+def quack():
     """
-    Migrate COL to DUCK. Quack quack.
+    Migrate and burn COL for DUCK. Quack quack.
     """
-    col_amount: uint256 = ERC20(COL).balanceOf(msg.sender)
-    duck_amount: uint256 = col_amount / RATIO
-    assert duck_amount > 0  # dev: nothing to migrate
-    ERC20(COL).transferFrom(msg.sender, DEAD, col_amount)
-    self.totalSupply += duck_amount
-    self.balanceOf[msg.sender] += duck_amount
-    log Transfer(ZERO_ADDRESS, msg.sender, duck_amount)
+    cols: uint256 = ERC20(COL).balanceOf(msg.sender)
+    ducks: uint256 = cols / RATIO
+    ERC20(COL).transferFrom(msg.sender, DEAD, cols)
+    self.totalSupply += ducks
+    self.balanceOf[msg.sender] += ducks
+    log Transfer(ZERO_ADDRESS, msg.sender, ducks)
 
 
 @view
@@ -56,7 +55,7 @@ def allowance(owner: address, spender: address) -> uint256:
 
 @external
 def transfer(receiver: address, amount: uint256) -> bool:
-    assert not receiver in [self, ZERO_ADDRESS]
+    assert receiver not in [self, ZERO_ADDRESS]
     self.balanceOf[msg.sender] -= amount
     self.balanceOf[receiver] += amount
     log Transfer(msg.sender, receiver, amount)
@@ -65,7 +64,7 @@ def transfer(receiver: address, amount: uint256) -> bool:
 
 @external
 def transferFrom(owner: address, receiver: address, amount: uint256) -> bool:
-    assert not receiver in [self, ZERO_ADDRESS]
+    assert receiver not in [self, ZERO_ADDRESS]
     self.balanceOf[owner] -= amount
     self.balanceOf[receiver] += amount
     if owner != msg.sender and self.allowances[owner][msg.sender] != MAX_UINT256:

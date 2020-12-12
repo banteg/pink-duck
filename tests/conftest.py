@@ -25,7 +25,7 @@ def duck(Duck, whale):
 def fat_duck(duck, whale, col, accounts):
     # a duck with two accounts stuffed with balances
     col.approve(duck, 2 ** 256 - 1)
-    duck.migrate()
+    duck.quack()
     duck.transfer(accounts[0], duck.balanceOf(whale) / 2)
     duck.transfer(accounts[1], duck.balanceOf(whale) / 2)
     return duck
