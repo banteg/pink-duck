@@ -41,3 +41,7 @@ def test_transferFrom(accounts, fat_duck):
     assert unlimited.gas_used < normal.gas_used
     assert fat_duck.balanceOf(a) == 0
     assert fat_duck.balanceOf(b) == a_balance + b_balance
+    # transfer from self without allowance
+    fat_duck.transferFrom(b, a, fat_duck.balanceOf(b), {'from': b})
+    assert fat_duck.balanceOf(b) == 0
+    assert fat_duck.balanceOf(a) == a_balance + b_balance
